@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>近くのカフェ</title>
+	<link rel="stylesheet" href="./assets/cofee.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+</head>
+<body>
+  <nav class="navbar fixed-top navbar-inverse bg-primary ">
+    <a class="navbar-brand" href="/">locabook</a>
+  
+    <ul class="nav nav-tabs">
+      <p class="navbar-text navbar-right">Welcome!<a href="/user" class="navbar-link"> <%= User.find(session[:user]).name %></a> さん</p>
+      <p class="navbar-text navbar-right"><a href="/signin" class="navbar-link">ログアウト</a></p>
+    </ul>
+  </nav>
+  
+  <div class="container">
+  <div class="row">
+  <div class="col-md-offset-3 col-md-6">
+    <a href="/user">ユーザ情報へ</a>
+	<h1>近くのカフェ</h1>
+	
+	<% if @shop_name %>
+	    <h2><%= @shop_name%></h2><br />
+	    <a href="http://maps.google.co.jp/maps?ll=<%= @shop_location %>&q=<%= @shop_name %>"><h3>場所をチェックする</h3></a>
+	<% else %>
+		<h2>近くにカフェがありません</h2>
+		<a href="/">トップに戻る</a>
+	<% end %>
+   </div>
+   </div>
+   </div>
+</body>
+</html>

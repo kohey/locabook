@@ -1,0 +1,8 @@
+body{
+    background-image: url("../images/toppage.jpg");
+}
+
+.top{
+    margin-top: 220px;
+    background-color: rgba(33, 39, 98, 0.5);
+}

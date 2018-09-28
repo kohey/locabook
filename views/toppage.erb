@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>商品検索</title>
+	<script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<link rel="stylesheet" href="./assets/top.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+
+
+<body>
+    
+　<div class="top">
+     <div class="center jumbotron">
+		  <div class="text-center">
+		    <h1>locabookへようこそ!</h1>
+		    <h3><a href="/signin">ログインする</a></h3>
+		    <h6>初めての方はこちら  <span><h7><a href="/signup">新規登録</a></h7></span></h6>
+		    <% if session['ido']%>
+		      <form action="/locate" method="post">
+		    	<input type= "submit" class="location btn btn-success" value="近くのカフェ">
+		      </form>
+		    <% else %>
+		      <form action="/" method="get">
+		    	<input type= "submit" class="here btn btn-success" value="現在位置を取得">
+		    	<div id="result">
+		    		
+		    	</div>
+		      </form>
+		    <% end %>
+		  </div>
+	</div>
+  </div>
+<script type="text/javascript">	
+
+        window.onload = function(){
+		$(".here").click(function() {
+			
+// 対応している場合
+if( navigator.geolocation )
+{
+	// 現在地を取得
+	navigator.geolocation.getCurrentPosition(
+
+		// [第1引数] 取得に成功した場合の関数
+		function( position )
+		{
+			// 取得したデータの整理
+			var data = position.coords ;
+
+			// データの整理
+			var lat = data.latitude ;
+			var lng = data.longitude ;
+			var alt = data.altitude ;
+			var accLatlng = data.accuracy ;
+			var accAlt = data.altitudeAccuracy ;
+			var heading = data.heading ;			//0=北,90=東,180=南,270=西
+			var speed = data.speed ;
+			
+			var keido;
+			var ido;
+			
+			console.log(lat);
+			console.log(lng);
+			
+			//ここまではok,以下変数を渡す
+			
+			var request = $.ajax({
+         	  type: "get",
+	          url: "/",
+	          dataType: "text",
+	          data: {
+	            keido: lng,
+	            ido: lat
+	          },
+	        success: function(text) {
+	        dataType: "text",
+	        $('#result').append(text);
+	        },
+	        error: function() {
+	        $('#result').append('error');
+	        }
+        	});
+		},
+		
+		
+		// [第2引数] 取得に失敗した場合の関数
+		function( error )
+		{
+			// エラー番号に対応したメッセージ
+			var errorInfo = [
+				"原因不明のエラーが発生しました…。" ,
+				"位置情報の取得が許可されませんでした…。" ,
+				"電波状況などで位置情報が取得できませんでした…。" ,
+				"位置情報の取得に時間がかかり過ぎてタイムアウトしました…。"
+			] ;
+
+			// エラー番号
+			var errorNo = error.code ;
+
+			// エラーメッセージ
+			var errorMessage = "[エラー番号: " + errorNo + "]\n" + errorInfo[ errorNo ] ;
+			
+			alert( errorMessage ) ;
+		} ,
+
+		// [第3引数] オプション
+		{
+			"enableHighAccuracy": false,
+			"timeout": 15000,
+			"maximumAge": 2000,
+		}
+
+	) ;
+}
+
+// 対応していない場合
+else
+{
+	// エラーメッセージ
+	var errorMessage = "お使いの端末は、GeoLacation APIに対応していません。" ;
+
+	// アラート表示
+	alert( errorMessage ) ;
+}
+		});
+	}
+</script>
+</body>
+</html>

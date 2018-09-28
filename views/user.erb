@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>locabook</title>
+    <script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+  	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <link rel="stylesheet"  href="./assets/user.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="navbar fixed-top navbar-inverse bg-primary ">
+    <a class="navbar-brand" href="/">locabook</a>
+  
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        
+      </li>
+      <p class="navbar-text navbar-right">Welcome!<a href="/user" class="navbar-link"> <%= User.find(session[:user]).name %></a> さん</p>
+      <p class="navbar-text navbar-right"><a href="/signout" class="navbar-link">ログアウト</a></p>
+    </ul>
+  </nav>
+    
+    <div class="container user">
+     <div class="row">
+     <div class="col-md-offset-3 col-md-6">
+        <% unless session[:user] %>
+            <h2>ログインしていません</h2>
+        <% else %>
+            <h1>こんにちは！<%= User.find(session[:user]).name %>さん</h1>
+        <% end %>
+            <button class="btn btn-default"><a href="/search">本を検索する</a></button><br />
+            <form action="/locate" method="post">
+        	    <input type="submit" value="近くのカフェ" class="btn btn-default">
+            </form>
+      </div>
+      </div>
+    </div>
+    
+</body>
+</html>  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ 

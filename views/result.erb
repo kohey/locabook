@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>商品検索結果</title>
+	<script src="//code.jquery.com/jquery-1.12.1.min.js"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<link rel="stylesheet" type="text/css" href="./assets/result.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar fixed-top navbar-inverse bg-primary ">
+    <a class="navbar-brand" href="/">locabook</a>
+  
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+     
+      </li>
+      <p class="navbar-text navbar-right">Welcome!<a href="/user" class="navbar-link"> <%= User.find(session[:user]).email %></a> さん</p>
+      <p class="navbar-text navbar-right"><a href="/signin" class="navbar-link">ログアウト</a></p>
+    </ul>
+  </nav>
+  
+  <div class="col-md-offset-4 col-md-6 top">	
+      <form action="/search" method="post">
+          <input type="text" name="keyword" placeholder= "キーワードを入力">
+          <button>商品を検索</button>
+      </form><br>
+      <form action="/locate" method="post">
+        	<input type= "submit" class="location btn btn-success" value="近くのカフェを探す">
+      </form>
+  </div>
+  
+  <% if @items.present? %>
+  <div class="row">
+    <% @items.each do |item| %>
+      <div class="item">
+        <div class="col-md-3 col-sm-4 col-xs-12">
+          <div class="panel panel-default">
+            <div class="panel-heading text-center">
+              <img src="<%= item.image_url %>" alt="" >
+            </div>
+            <div class="panel-body">
+              <a href="<%= item.url%>"><%= item.name%></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <% end %>
+
+
+<script type="text/javascript">	
+
+        window.onload = function(){
+		$(".location").click(function() {
+			
+// 対応している場合
+if( navigator.geolocation )
+{
+	// 現在地を取得
+	navigator.geolocation.getCurrentPosition(
+
+		// [第1引数] 取得に成功した場合の関数
+		function( position )
+		{
+			// 取得したデータの整理
+			var data = position.coords ;
+
+			// データの整理
+			var lat = data.latitude ;
+			var lng = data.longitude ;
+			var alt = data.altitude ;
+			var accLatlng = data.accuracy ;
+			var accAlt = data.altitudeAccuracy ;
+			var heading = data.heading ;			//0=北,90=東,180=南,270=西
+			var speed = data.speed ;
+			
+			var keido;
+			var ido;
+			
+			console.log(lat);
+			console.log(lng);
+			
+			//ここまではok,以下変数を渡す
+			
+			var request = $.ajax({
+         	  type: "post",
+	          url: "/locate",
+	          dataType: "text",
+	          data: {
+	            keido: lng,
+	            ido: lat
+	          },
+	        success: function(text) {
+	        dataType: "text",
+	        $('#result').append(text);
+	        },
+	        error: function() {
+	        $('#result').append('error');
+	        }
+        	});
+		},
+		
+		
+		// [第2引数] 取得に失敗した場合の関数
+		function( error )
+		{
+			// エラー番号に対応したメッセージ
+			var errorInfo = [
+				"原因不明のエラーが発生しました…。" ,
+				"位置情報の取得が許可されませんでした…。" ,
+				"電波状況などで位置情報が取得できませんでした…。" ,
+				"位置情報の取得に時間がかかり過ぎてタイムアウトしました…。"
+			] ;
+
+			// エラー番号
+			var errorNo = error.code ;
+
+			// エラーメッセージ
+			var errorMessage = "[エラー番号: " + errorNo + "]\n" + errorInfo[ errorNo ] ;
+			
+			alert( errorMessage ) ;
+		} ,
+
+		// [第3引数] オプション
+		{
+			"enableHighAccuracy": false,
+			"timeout": 8000,
+			"maximumAge": 2000,
+		}
+
+	) ;
+}
+
+// 対応していない場合
+else
+{
+	// エラーメッセージ
+	var errorMessage = "お使いの端末は、GeoLacation APIに対応していません。" ;
+
+	// アラート表示
+	alert( errorMessage ) ;
+}
+		});
+	}
+</script>
+        
+</body>
+</html>
